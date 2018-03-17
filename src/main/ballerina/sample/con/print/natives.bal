@@ -1,5 +1,7 @@
 package sample.con.print;
 
-public connector PrintConnector() {
-    native action printText(string text)(boolean);
+public struct PrintConnector {
 }
+
+public native function <PrintConnector printConnector> initPrinter();
+public native function <PrintConnector printConnector> printText(string text) (boolean);

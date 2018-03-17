@@ -1,38 +1,37 @@
 package org.sample.con.print;
 
 import org.ballerinalang.bre.Context;
-import org.ballerinalang.connector.api.AbstractNativeAction;
-import org.ballerinalang.connector.api.ConnectorFuture;
+import org.ballerinalang.bre.bvm.CallableUnitCallback;
+import org.ballerinalang.model.NativeCallableUnit;
 import org.ballerinalang.model.types.TypeKind;
 import org.ballerinalang.model.values.BBoolean;
-import org.ballerinalang.nativeimpl.actions.ClientConnectorFuture;
 import org.ballerinalang.natives.annotations.Argument;
-import org.ballerinalang.natives.annotations.BallerinaAction;
+import org.ballerinalang.natives.annotations.BallerinaFunction;
+import org.ballerinalang.natives.annotations.Receiver;
 import org.ballerinalang.natives.annotations.ReturnType;
 
-@BallerinaAction(
+@BallerinaFunction(
         packageName = "sample.con.print",
-        actionName = "printText",
-        connectorName = "PrintConnector",
-        args = {
-                @Argument(name = "text",
-                        type = TypeKind.STRING)
-        },
-        returnType = {
-                @ReturnType(type = TypeKind.BOOLEAN)
-        }
+        functionName = "printText",
+        receiver = @Receiver(type = TypeKind.STRUCT, structType = "PrintConnector",
+                structPackage = "sample.con.print"),
+        args = {@Argument(name = "text", type = TypeKind.STRING)},
+        returnType = {@ReturnType(type = TypeKind.BOOLEAN)},
+        isPublic = true
 )
-public class PrintText extends AbstractNativeAction {
+public class PrintText implements NativeCallableUnit {
 
     @Override
-    public ConnectorFuture execute(Context context) {
-        ClientConnectorFuture future = new ClientConnectorFuture();
-        //Implement your logic here
+    public void execute(Context context, CallableUnitCallback callableUnitCallback) {
         System.out.println("**** Action printText called ****");
-        String text = getStringArgument(context, 0);
+        String text = context.getStringArgument(0);
         System.out.println("**** " + text + " ****");
-        BBoolean result = new BBoolean(true);
-        future.notifyReply(result);
-        return future;
+        context.setReturnValues(new BBoolean(true));
+        callableUnitCallback.notifySuccess();
+    }
+
+    @Override
+    public boolean isBlocking() {
+        return true;
     }
 }
