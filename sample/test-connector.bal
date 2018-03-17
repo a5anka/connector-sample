@@ -1,9 +1,8 @@
 import ballerina.io;
 import sample.con.print;
 
-print:PrintConnector testPrint = {};
-
 function main (string[] args) {
+    print:PrintConnector testPrint = {};
     io:println("Hello, World!");
 }
 
